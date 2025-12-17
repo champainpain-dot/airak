@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Bold Planner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- พื้นหลังเปลี่ยนสีแบบนุ่มนวล --- */
+        @keyframes auroraBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            /* สีพื้นหลังแบบทันสมัย */
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: auroraBG 15s ease infinite;
+            color: #2d3436;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 30px;
+        }
+
+        /* หัวข้อตัวใหญ่ชัดเจน */
+        header h1 {
+            text-align: center;
+            color: white;
+            font-size: 42px; /* ใหญ่ขึ้น */
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* --- กรอบสีขาวทึบ (Solid Card) --- */
+        .card {
+            background: #ffffff;
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            margin-bottom: 25px;
+            border: none;
+        }
+
+        /* ส่วนความคืบหน้า */
+        .status-title {
+            font-size: 24px; /* ใหญ่ขึ้น */
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #4834d4;
+        }
+
+        .bar-outer {
+            width: 100%;
+            height: 25px; /* หนาขึ้น */
+            background: #f0f2f5;
+            border-radius: 50px;
+            overflow: hidden;
+            border: 2px solid #eee;
+        }
+
+        .bar-inner {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #686de0, #4834d4);
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(104, 109, 224, 0.5);
+        }
+
+        /* ส่วนกรอกข้อมูล */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-group label {
+            font-size: 20px;
+            font-weight: 600;
+            color: #636e72;
+        }
+
+        input {
+            background: #f9f9f9;
+            border: 3px solid #f0f2f5;
+            padding: 18px;
+            border-radius: 15px;
+            font-family: 'Prompt';
+            font-size: 20px; /* ขนาดตัวหนังสือพิมพ์ใหญ่ขึ้น */
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #4834d4;
+            background: #fff;
+        }
+
+        .btn-submit {
+            background: #4834d4;
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 22px; /* ปุ่มใหญ่ */
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 8px 20px rgba(72, 52, 212, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            background: #686de0;
+            box-shadow: 0 12px 25px rgba(72, 52, 212, 0.4);
+        }
+
+        /* รายการ Task */
+        .task-box {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-left: 15px solid #4834d4; /* แถบสีข้างหนาๆ */
+            transition: 0.3s;
+        }
+
+        .task-box.urgent { border-left-color: #eb4d4b; }
+        .task-box.finished { border-left-color: #6ab04c; opacity: 0.8; background: #fcfcfc; }
+
+        .task-content { flex: 1; }
+        .task-header { 
+            font-size: 24px; /* ชื่อรายการใหญ่ขึ้น */
+            font-weight: 700; 
+            display: block;
+            margin-bottom: 5px;
+        }
+        .task-sub { 
+            font-size: 18px; 
+            color: #95a5a6; 
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .text-done { text-decoration: line-through; color: #b2bec3; }
+
+        .btn-actions { display: flex; gap: 12px; }
+        .icon-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .btn-done { background: #e3fcef; color: #27ae60; }
+        .btn-trash { background: #fff0f0; color: #eb4d4b; }
+        .icon-btn:hover { transform: scale(1.15); }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🏆 TASKS MASTER</h1>
+    </header>
+
+    <div class="card">
+        <div class="status-title">
+            <span>🚀 ความสำเร็จวันนี้</span>
+            <span id="percentText">0%</span>
+        </div>
+        <div class="bar-outer">
+            <div class="bar-inner" id="myBar"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="input-group">
+            <label>💬 สิ่งที่ต้องทำ:</label>
+            <input type="text" id="taskName" placeholder="เช่น เตรียมพรีเซนต์งาน...">
+            <label>⏰ วันที่และเวลา:</label>
+            <input type="datetime-local" id="taskDate">
+            <button class="btn-submit" onclick="addNewItem()">➕ เพิ่มภารกิจใหม่</button>
+        </div>
+    </div>
+
+    <div id="taskList"></div>
+</div>
+
+<script>
+    let listData = JSON.parse(localStorage.getItem('masterTasks')) || [];
+
+    function addNewItem() {
+        const name = document.getElementById('taskName').value;
+        const date = document.getElementById('taskDate').value;
+
+        if (!name || !date) {
+            alert("กรุณากรอกข้อมูลให้ครบนะครับ ✨");
+            return;
+        }
+
+        const obj = {
+            id: Date.now(),
+            title: name,
+            due: new Date(date).getTime(),
+            isDone: false
+        };
+
+        listData.push(obj);
+        saveData();
+        document.getElementById('taskName').value = "";
+    }
+
+    function toggleItem(id) {
+        listData = listData.map(item => item.id === id ? {...item, isDone: !item.isDone} : item);
+        saveData();
+    }
+
+    function removeItem(id) {
+        if(confirm("ลบงานนี้ออกใช่ไหม? 🗑️")) {
+            listData = listData.filter(item => item.id !== id);
+            saveData();
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem('masterTasks', JSON.stringify(listData));
+        draw();
+    }
+
+    function draw() {
+        const listDiv = document.getElementById('taskList');
+        listDiv.innerHTML = "";
+
+        // เรียงลำดับ (ยังไม่เสร็จอยู่บน + เรียงตามเวลา)
+        listData.sort((a, b) => a.isDone - b.isDone || a.due - b.due);
+
+        listData.forEach(item => {
+            const timeLeft = (item.due - Date.now()) / (1000 * 60 * 60);
+            const urgent = timeLeft < 24 && !item.isDone;
+            
+            const timeFormatted = new Date(item.due).toLocaleString('th-TH', {
+                day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+            });
+
+            const div = document.createElement('div');
+            div.className = `task-box ${item.isDone ? 'finished' : (urgent ? 'urgent' : '')}`;
+            
+            div.innerHTML = `
+                <div class="task-content">
+                    <span class="task-header ${item.isDone ? 'text-done' : ''}">${item.isDone ? '🏆' : '🎯'} ${item.title}</span>
+                    <span class="task-sub">📅 ${timeFormatted} ${urgent ? '<b style="color:#eb4d4b;">[ด่วน!]</b>' : ''}</span>
+                </div>
+                <div class="btn-actions">
+                    <button class="icon-btn btn-done" onclick="toggleItem(${item.id})">${item.isDone ? '🔄' : '✔'}</button>
+                    <button class="icon-btn btn-trash" onclick="removeItem(${item.id})">🗑️</button>
+                </div>
+            `;
+            listDiv.appendChild(div);
+        });
+
+        // คำนวณ %
+        const total = listData.length;
+        const done = listData.filter(i => i.isDone).length;
+        const percentage = total === 0 ? 0 : Math.round((done / total) * 100);
+        
+        document.getElementById('myBar').style.width = percentage + "%";
+        document.getElementById('percentText').innerText = `${percentage}% (${done}/${total})`;
+    }
+
+    draw();
+</script>
+
+</body>
+</html>
